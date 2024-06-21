@@ -8,9 +8,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.lg.websquare.entity.Employee;
-import org.lg.websquare.entity.dto.CreateRequest;
-import org.lg.websquare.entity.dto.Params;
-import org.lg.websquare.entity.dto.SearchRequest;
+import org.lg.websquare.entity.dto.*;
 import org.lg.websquare.repository.EmployeeRepository;
 import org.lg.websquare.util.DataUtil;
 import org.springframework.data.domain.Page;
@@ -26,9 +24,9 @@ public class EmployeeService {
 
     private final EmployeeRepository employeeRepository;
 
-    public Page<Employee> search(Params searchRequest, Pageable pageable) {
+    public SearchResponse search(Params searchRequest, Pageable pageable) {
 
-        return employeeRepository.search(
+        Page<Employee> page = employeeRepository.search(
                 DataUtil.appendPercent(searchRequest.getPname()),
                 DataUtil.appendPercent(searchRequest.getPteam()),
                 DataUtil.appendPercent(searchRequest.getPphone()),
@@ -37,6 +35,14 @@ public class EmployeeService {
                 DataUtil.stringToDate(searchRequest.getPtoDate()),
                 pageable
         );
+
+        return SearchResponse.builder()
+                .employees(page.getContent())
+                .paginations(Pagination.builder()
+                        .totalElement(page.getTotalElements())
+                        .totalPage(page.getTotalPages())
+                        .build())
+                .build();
     };
 
     public String create(CreateRequest createRequest) {

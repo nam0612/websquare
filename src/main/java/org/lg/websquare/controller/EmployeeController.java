@@ -7,6 +7,7 @@ import org.lg.websquare.entity.Employee;
 import org.lg.websquare.entity.dto.CreateRequest;
 import org.lg.websquare.entity.dto.Params;
 import org.lg.websquare.entity.dto.SearchRequest;
+import org.lg.websquare.entity.dto.SearchResponse;
 import org.lg.websquare.service.EmployeeService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,7 +24,7 @@ public class EmployeeController {
     private final EmployeeService employeeService;
 
     @PostMapping("/search")
-    public Page<Employee> search(
+    public SearchResponse search(
                                  @RequestBody SearchRequest searchRequest
                                  ) {
         Pageable pageable = Pageable.ofSize(searchRequest.getParams().getPsize()).withPage(searchRequest.getParams().getPpage());
