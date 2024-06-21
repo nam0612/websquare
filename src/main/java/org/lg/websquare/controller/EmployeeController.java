@@ -21,13 +21,11 @@ public class EmployeeController {
 
     private final EmployeeService employeeService;
 
-    @PostMapping("/search/{page}/{size}")
+    @PostMapping("/search")
     public Page<Employee> search(
-                                 @PathVariable int page,
-                                 @PathVariable int size,
                                  @RequestBody SearchRequest searchRequest
                                  ) {
-        Pageable pageable = Pageable.ofSize(size).withPage(page);
+        Pageable pageable = Pageable.ofSize(searchRequest.getSize()).withPage(searchRequest.getPage());
         return employeeService.search(searchRequest, pageable);
     }
 
@@ -37,12 +35,7 @@ public class EmployeeController {
     }
 
     @PostMapping()
-    public String add(@RequestBody CreateRequest employee) {
-        return employeeService.create(employee);
-    }
-
-    @PutMapping
-    public String update(@RequestBody CreateRequest employee) {
+    public String addOrCreate(@RequestBody CreateRequest employee) {
         return employeeService.create(employee);
     }
 

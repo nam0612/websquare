@@ -12,4 +12,6 @@ public class SearchRequest {
     private String pgender;
     private String pfromDate;
     private String ptoDate;
+    private int page;
+    private int size;
 }
