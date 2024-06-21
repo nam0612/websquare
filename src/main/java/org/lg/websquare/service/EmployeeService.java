@@ -9,6 +9,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.lg.websquare.entity.Employee;
 import org.lg.websquare.entity.dto.CreateRequest;
+import org.lg.websquare.entity.dto.Params;
 import org.lg.websquare.entity.dto.SearchRequest;
 import org.lg.websquare.repository.EmployeeRepository;
 import org.lg.websquare.util.DataUtil;
@@ -25,7 +26,7 @@ public class EmployeeService {
 
     private final EmployeeRepository employeeRepository;
 
-    public Page<Employee> search(SearchRequest searchRequest, Pageable pageable) {
+    public Page<Employee> search(Params searchRequest, Pageable pageable) {
 
         return employeeRepository.search(
                 DataUtil.appendPercent(searchRequest.getPname()),

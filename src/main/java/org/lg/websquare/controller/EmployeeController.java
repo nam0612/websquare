@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.lg.websquare.entity.Employee;
 import org.lg.websquare.entity.dto.CreateRequest;
+import org.lg.websquare.entity.dto.Params;
 import org.lg.websquare.entity.dto.SearchRequest;
 import org.lg.websquare.service.EmployeeService;
 import org.springframework.data.domain.Page;
@@ -25,8 +26,8 @@ public class EmployeeController {
     public Page<Employee> search(
                                  @RequestBody SearchRequest searchRequest
                                  ) {
-        Pageable pageable = Pageable.ofSize(searchRequest.getSize()).withPage(searchRequest.getPage());
-        return employeeService.search(searchRequest, pageable);
+        Pageable pageable = Pageable.ofSize(searchRequest.getParams().getPsize()).withPage(searchRequest.getParams().getPpage());
+        return employeeService.search(searchRequest.getParams(), pageable);
     }
 
     @DeleteMapping()
