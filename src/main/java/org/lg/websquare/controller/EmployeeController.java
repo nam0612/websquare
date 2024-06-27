@@ -4,10 +4,7 @@ package org.lg.websquare.controller;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.lg.websquare.entity.Employee;
-import org.lg.websquare.entity.dto.CreateRequest;
-import org.lg.websquare.entity.dto.Params;
-import org.lg.websquare.entity.dto.SearchRequest;
-import org.lg.websquare.entity.dto.SearchResponse;
+import org.lg.websquare.entity.dto.*;
 import org.lg.websquare.service.EmployeeService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -42,7 +39,9 @@ public class EmployeeController {
     }
 
     @GetMapping("/downloadsExcel")
-    public void downloadsExcel(HttpServletResponse response) throws IOException {
-        employeeService.exportDataToExcel(response);
+    public ExportData downloadsExcel() throws IOException {
+        return ExportData.builder()
+                .employees(employeeService.exportDataToExcel())
+                .build();
     }
 }
