@@ -38,10 +38,10 @@ public class EmployeeController {
         return employeeService.create(employee);
     }
 
-    @PostMapping("/downloadsExcel")
-    public ExportResponse downloadsExcel(@RequestBody SearchRequest searchRequest) {
-        return ExportResponse.builder()
-                .employees(employeeService.exportDataToExcel(searchRequest.getParams()))
+    @GetMapping("/downloadsExcel")
+    public ExportData downloadsExcel() throws IOException {
+        return ExportData.builder()
+                .employees(employeeService.exportDataToExcel())
                 .build();
     }
 
