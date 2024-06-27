@@ -13,11 +13,17 @@ public class DataUtil {
         return "%" + input.trim().toLowerCase() + "%";
     }
 
+    public  static String formatEmpty(String input) {
+        if(input == null || input.isEmpty()) return null;
+        return input;
+    }
+
+
     public static Date stringToDate(String date) {
         if (date == null || date.isEmpty()) {
             return null;
         }
-        String dateFormat = "yyyy-MM-dd";
+        String dateFormat = "yyyyMMdd";
 
         SimpleDateFormat formatter = new SimpleDateFormat(dateFormat);
         try {

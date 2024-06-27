@@ -4,10 +4,7 @@ package org.lg.websquare.controller;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.lg.websquare.entity.Employee;
-import org.lg.websquare.entity.dto.CreateRequest;
-import org.lg.websquare.entity.dto.Params;
-import org.lg.websquare.entity.dto.SearchRequest;
-import org.lg.websquare.entity.dto.SearchResponse;
+import org.lg.websquare.entity.dto.*;
 import org.lg.websquare.service.EmployeeService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,8 +22,8 @@ public class EmployeeController {
 
     @PostMapping("/search")
     public SearchResponse search(
-                                 @RequestBody SearchRequest searchRequest
-                                 ) {
+            @RequestBody SearchRequest searchRequest
+    ) {
         Pageable pageable = Pageable.ofSize(searchRequest.getParams().getPsize()).withPage(searchRequest.getParams().getPpage());
         return employeeService.search(searchRequest.getParams(), pageable);
     }
@@ -41,8 +38,16 @@ public class EmployeeController {
         return employeeService.create(employee);
     }
 
-    @GetMapping("/downloadsExcel")
-    public void downloadsExcel(HttpServletResponse response) throws IOException {
-        employeeService.exportDataToExcel(response);
+    @PostMapping("/downloadsExcel")
+    public ExportResponse downloadsExcel(@RequestBody SearchRequest searchRequest) {
+        return ExportResponse.builder()
+                .employees(employeeService.exportDataToExcel(searchRequest.getParams()))
+                .build();
     }
+
+//    @PostMapping("/upload")
+//    public String uploadFile() {
+//
+//    }
+
 }

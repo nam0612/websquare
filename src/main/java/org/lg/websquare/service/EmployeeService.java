@@ -30,7 +30,7 @@ public class EmployeeService {
                 DataUtil.appendPercent(searchRequest.getPname()),
                 DataUtil.appendPercent(searchRequest.getPteam()),
                 DataUtil.appendPercent(searchRequest.getPphone()),
-                DataUtil.appendPercent(searchRequest.getPgender()),
+                DataUtil.formatEmpty(searchRequest.getPgender()),
                 DataUtil.stringToDate(searchRequest.getPfromDate()),
                 DataUtil.stringToDate(searchRequest.getPtoDate()),
                 pageable
@@ -87,57 +87,24 @@ public class EmployeeService {
         if (employees.isEmpty()) {
             return "Employee not exist";
         }
-        for (var employee : employees) {
-            employee.setStatus("INACTIVE");
-        }
-
         try {
-            employeeRepository.saveAll(employees);
+            employeeRepository.deleteAll(employees);
             return "Delete success";
         } catch (Exception e) {
             return "Delete fail";
         }
     }
 
-    public void exportDataToExcel(HttpServletResponse response) throws IOException {
-        List<Employee> dataList = employeeRepository.findAll();
-        Workbook workbook = new XSSFWorkbook();
-        Sheet sheet = workbook.createSheet("Data");
-
-        Row headerRow = sheet.createRow(0);
-        headerRow.createCell(0).setCellValue("Num ");
-        headerRow.createCell(1).setCellValue("Name");
-        headerRow.createCell(2).setCellValue("Birth Date");
-        headerRow.createCell(3).setCellValue("Gender");
-        headerRow.createCell(4).setCellValue("Phone");
-        headerRow.createCell(5).setCellValue("Email");
-        headerRow.createCell(6).setCellValue("Address");
-        headerRow.createCell(7).setCellValue("Team");
-        headerRow.createCell(8).setCellValue("Status");
-
-
-        // Create data rows
-        int rowNum = 1;
-        for (Employee data : dataList) {
-            Row dataRow = sheet.createRow(rowNum++);
-            dataRow.createCell(0).setCellValue(rowNum);
-            dataRow.createCell(1).setCellValue(data.getName());
-            dataRow.createCell(2).setCellValue(data.getBirthDate());
-            dataRow.createCell(3).setCellValue(data.getGender());
-            dataRow.createCell(4).setCellValue(data.getPhone());
-            dataRow.createCell(5).setCellValue(data.getEmail());
-            dataRow.createCell(6).setCellValue(data.getAddress());
-            dataRow.createCell(7).setCellValue(data.getTeam());
-            dataRow.createCell(8).setCellValue(data.getStatus());
-
-        }
-
-        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-        response.setHeader("Content-Disposition", "attachment; filename=data.xlsx");
-
-        ServletOutputStream outputStream = response.getOutputStream();
-        workbook.write(outputStream);
-        workbook.close();
-        outputStream.close();
+    public List<Employee> exportDataToExcel(Params searchRequest) {
+        List<Employee> listEmployee = employeeRepository.downloadsExcel(
+                DataUtil.appendPercent(searchRequest.getPname()),
+                DataUtil.appendPercent(searchRequest.getPteam()),
+                DataUtil.appendPercent(searchRequest.getPphone()),
+                DataUtil.formatEmpty(searchRequest.getPgender()),
+                DataUtil.stringToDate(searchRequest.getPfromDate()),
+                DataUtil.stringToDate(searchRequest.getPtoDate())
+        );
+        return listEmployee;
     }
+
 }
