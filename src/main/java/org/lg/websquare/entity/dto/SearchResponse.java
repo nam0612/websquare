@@ -10,6 +10,6 @@ import java.util.List;
 @Setter
 @Builder
 public class SearchResponse {
-    private List<Employee> employees;
+    private List<EmployeeDTO> employees;
     private Pagination paginations;
 }

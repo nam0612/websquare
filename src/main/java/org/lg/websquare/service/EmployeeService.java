@@ -7,16 +7,22 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.lg.websquare.convert.EmployeeConverter;
 import org.lg.websquare.entity.Employee;
 import org.lg.websquare.entity.dto.*;
 import org.lg.websquare.repository.EmployeeRepository;
 import org.lg.websquare.util.DataUtil;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +31,8 @@ public class EmployeeService {
     private final EmployeeRepository employeeRepository;
 
     public SearchResponse search(Params searchRequest, Pageable pageable) {
+        Sort sort = Sort.by(Sort.Direction.DESC, "created_date");
+        Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
 
         Page<Employee> page = employeeRepository.search(
                 DataUtil.appendPercent(searchRequest.getPname()),
@@ -33,11 +41,15 @@ public class EmployeeService {
                 DataUtil.formatEmpty(searchRequest.getPgender()),
                 DataUtil.stringToDate(searchRequest.getPfromDate()),
                 DataUtil.stringToDate(searchRequest.getPtoDate()),
-                pageable
+               // pageable
+                sortedPageable
         );
 
+        EmployeeConverter employeeConverter = new EmployeeConverter();
+        List<EmployeeDTO> employeeDTOS = employeeConverter.convertToDTO(page.getContent());
+
         return SearchResponse.builder()
-                .employees(page.getContent())
+                .employees(employeeDTOS)
                 .paginations(Pagination.builder()
                         .totalElement(page.getTotalElements())
                         .totalPage(page.getTotalPages())
@@ -56,6 +68,8 @@ public class EmployeeService {
             employee.setBirthDate(DataUtil.stringToDate(createRequest.getBirthDate()));
             employee.setAddress(createRequest.getAddress());
             employee.setStatus(createRequest.getStatus());
+
+            employee.setCreatedDate(new Date());
 
             try {
                 employeeRepository.save(employee);

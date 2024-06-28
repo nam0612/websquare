@@ -1,16 +1,11 @@
 package org.lg.websquare.controller;
 
-
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.lg.websquare.entity.Employee;
 import org.lg.websquare.entity.dto.*;
 import org.lg.websquare.service.EmployeeService;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -44,10 +39,4 @@ public class EmployeeController {
                 .employees(employeeService.exportDataToExcel(searchRequest.getParams()))
                 .build();
     }
-
-//    @PostMapping("/upload")
-//    public String uploadFile() {
-//
-//    }
-
 }

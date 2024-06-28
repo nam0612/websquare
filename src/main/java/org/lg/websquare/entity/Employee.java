@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.UuidGenerator;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Getter
@@ -26,4 +28,6 @@ public class Employee {
     private String address;
     private String team;
     private String status;
+
+    private Date createdDate;
 }

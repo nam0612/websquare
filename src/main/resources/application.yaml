@@ -4,9 +4,9 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    username: springstudent
-    password: springstudent
-    url: jdbc:mysql://localhost:3306/websquare
+    username: root
+    password: 123456
+    url: jdbc:mysql://localhost:3306/mvc_course
   jpa:
     hibernate:
       ddl-auto: update
