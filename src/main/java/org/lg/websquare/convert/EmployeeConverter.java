@@ -36,7 +36,7 @@ public class EmployeeConverter {
         return employeeDTO;
     }
 
-    private String formatDate(Date date) {
+    public String formatDate(Date date) {
         if (date == null) {
             return null;
         }

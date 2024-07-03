@@ -19,6 +19,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
@@ -57,7 +58,7 @@ public class EmployeeService {
                 .build();
     };
 
-    public String create(CreateRequest createRequest) {
+    public String create(CreateRequest createRequest) throws ParseException {
         if(createRequest.getId() == null || employeeRepository.findById(createRequest.getId()).isEmpty()) {
             Employee employee = new Employee();
             employee.setName(createRequest.getName());
@@ -88,9 +89,10 @@ public class EmployeeService {
             employee.setPhone(createRequest.getPhone() == null ? employee.getPhone() : createRequest.getPhone());
             employee.setGender(createRequest.getGender() == null ? employee.getGender() : createRequest.getGender());
             employee.setEmail(createRequest.getEmail() == null ? employee.getEmail() : createRequest.getEmail());
-            employee.setBirthDate(createRequest.getBirthDate() == null ? employee.getBirthDate() : DataUtil.stringToDate(createRequest.getBirthDate()));
             employee.setAddress(createRequest.getAddress() == null ? employee.getAddress() : createRequest.getAddress());
             employee.setStatus(createRequest.getStatus() == null ? employee.getStatus() : createRequest.getStatus());
+            employee.setBirthDate(createRequest.getBirthDate() == null ? employee.getBirthDate() : DataUtil.convertStringToDate(createRequest.getBirthDate()));
+
             employeeRepository.save(employee);
             return "update success";
         }

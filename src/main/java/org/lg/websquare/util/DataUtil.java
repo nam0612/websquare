@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
@@ -37,27 +38,20 @@ public class DataUtil {
         }
     }
 
-    public static String toDate(String date) {
-        if (date == null || date.isEmpty()) {
-            return null;
+    public static Date convertStringToDate(String dateString) throws ParseException {
+        SimpleDateFormat inputFormatter = new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            inputFormatter.parse(dateString);
+            return inputFormatter.parse(dateString);
+        } catch (Exception e) {
+           e.getStackTrace();
         }
 
-//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-//        String formatDateTime = date.format(formatter);
+        DateTimeFormatter inputFormatter2 = DateTimeFormatter.ofPattern("yyyyMMdd");
+        LocalDate localDate = LocalDate.parse(dateString, inputFormatter2);
+        Date date = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        SimpleDateFormat outputFormatter = new SimpleDateFormat("yyyy-MM-dd");
 
-
-//        String dateFormat = "yyyyMMdd";
-//
-//        SimpleDateFormat formatter = new SimpleDateFormat(dateFormat);
-//        try {
-//            return formatter.parse(date);
-//        } catch (ParseException e) {
-//            System.out.println("Failed to convert the date.");
-//            return null;
-//        }
-
-        return null;
+        return outputFormatter.parse(outputFormatter.format(date));
     }
-
-
 }
