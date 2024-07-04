@@ -1,17 +1,20 @@
-package org.lg.websquare.service;
+package org.lg.websquare.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.lg.websquare.convert.EmployeeConverter;
 import org.lg.websquare.dto.*;
 import org.lg.websquare.entity.Employee;
 import org.lg.websquare.repository.EmployeeRepository;
+import org.lg.websquare.service.IEmployeeService;
 import org.lg.websquare.util.DataUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.text.ParseException;
 import java.util.Date;
@@ -19,10 +22,40 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class EmployeeService {
+public class EmployeeServiceImpl implements IEmployeeService {
 
     private final EmployeeRepository employeeRepository;
     private final EmployeeConverter employeeConverter;
+    private static final Logger logger = LoggerFactory.getLogger(EmployeeServiceImpl.class);
+
+    @Transactional
+    public void delete(List<String> ids) {
+        if (ids == null || ids.isEmpty()) {
+            logger.warn("Attempt to delete with null or empty ids");
+            return;
+        }
+
+        List<Employee> employees = employeeRepository.findAllById(ids);
+        try {
+            employeeRepository.deleteAll(employees);
+            logger.info("Successfully deleted employees with ids: {}", ids);
+        } catch (Exception e) {
+            logger.error("Failed to delete employees with ids: {}", ids, e);
+            throw new RuntimeException("Failed to delete employees", e);
+        }
+    }
+
+    @Transactional
+    public Employee createOrUpdate(CreateRequest createRequest) throws ParseException {
+        Employee employee = getEmployeeFromCreateRequest(createRequest);
+
+        try {
+            return employeeRepository.save(employee);
+        } catch (Exception e) {
+            logger.error("Failed to save employee: {}", employee, e);
+            throw new RuntimeException("Failed to save employee", e);
+        }
+    }
 
     public SearchResponse search(Params searchRequest, Pageable pageable) {
         Sort sort = Sort.by(Sort.Direction.DESC, "created_date");
@@ -50,66 +83,6 @@ public class EmployeeService {
                 .build();
     };
 
-
-
-
-//    private LocalDate updateBirthDate(LocalDate currentBirthDate, String newBirthDate) {
-//        return newBirthDate != null ? DataUtils.convertStringToDate(newBirthDate) : currentBirthDate;
-//    }
-
-//    public String create(CreateRequest createRequest) throws ParseException {
-//        if(createRequest.getId() == null || employeeRepository.findById(createRequest.getId()).isEmpty()) {
-//            Employee employee = new Employee();
-//            employee.setName(createRequest.getName());
-//            employee.setTeam(createRequest.getTeam());
-//            employee.setPhone(createRequest.getPhone());
-//            employee.setGender(createRequest.getGender());
-//            employee.setEmail(createRequest.getEmail());
-//            employee.setBirthDate(DataUtils.convertStringToDate(createRequest.getBirthDate()));
-//            employee.setAddress(createRequest.getAddress());
-//            employee.setStatus(createRequest.getStatus());
-//
-//            employee.setCreatedDate(new Date());
-//
-//            try {
-//                employeeRepository.save(employee);
-//                return "Add success";
-//            } catch (Exception e) {
-//                return "Add fail";
-//            }
-//        } else {
-//            Employee employee =employeeRepository.findById(createRequest.getId()).orElse(null);
-//            if(employee == null) {
-//                return "update fail";
-//            }
-//
-//            employee.setName(createRequest.getName() == null ? employee.getName() : createRequest.getName());
-//            employee.setTeam(createRequest.getTeam() == null ? employee.getTeam() : createRequest.getTeam());
-//            employee.setPhone(createRequest.getPhone() == null ? employee.getPhone() : createRequest.getPhone());
-//            employee.setGender(createRequest.getGender() == null ? employee.getGender() : createRequest.getGender());
-//            employee.setEmail(createRequest.getEmail() == null ? employee.getEmail() : createRequest.getEmail());
-//            employee.setAddress(createRequest.getAddress() == null ? employee.getAddress() : createRequest.getAddress());
-//            employee.setStatus(createRequest.getStatus() == null ? employee.getStatus() : createRequest.getStatus());
-//            employee.setBirthDate(createRequest.getBirthDate() == null ? employee.getBirthDate() : DataUtils.convertStringToDate(createRequest.getBirthDate()));
-//
-//            employeeRepository.save(employee);
-//            return "update success";
-//        }
-//    }
-
-    public String delete(List<String> ids) {
-        var employees = employeeRepository.findAllById(ids);
-        if (employees.isEmpty()) {
-            return "Employee not exist";
-        }
-        try {
-            employeeRepository.deleteAll(employees);
-            return "Delete success";
-        } catch (Exception e) {
-            return "Delete fail";
-        }
-    }
-
     public List<Employee> exportDataToExcel(Params searchRequest) {
         List<Employee> listEmployee = employeeRepository.downloadsExcel(
                 DataUtils.appendPercent(searchRequest.getPname()),
@@ -120,16 +93,6 @@ public class EmployeeService {
                 DataUtils.stringToDate(searchRequest.getPtoDate())
         );
         return listEmployee;
-    }
-
-    public String createOrUpdate(CreateRequest createRequest) throws ParseException {
-        Employee employee = getEmployeeFromCreateRequest(createRequest);
-        try {
-            employeeRepository.save(employee);
-            return "Add success";
-        } catch (Exception e) {
-            return "Add fail";
-        }
     }
 
     private Employee getEmployeeFromCreateRequest(CreateRequest createRequest) throws ParseException {

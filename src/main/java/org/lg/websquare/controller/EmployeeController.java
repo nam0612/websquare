@@ -5,7 +5,8 @@ import org.lg.websquare.dto.CreateRequest;
 import org.lg.websquare.dto.ExportResponse;
 import org.lg.websquare.dto.SearchRequest;
 import org.lg.websquare.dto.SearchResponse;
-import org.lg.websquare.service.EmployeeService;
+import org.lg.websquare.entity.Employee;
+import org.lg.websquare.service.IEmployeeService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,7 +18,7 @@ import java.util.List;
 @RequestMapping("/employee")
 public class EmployeeController {
 
-    private final EmployeeService employeeService;
+    private final IEmployeeService employeeService;
 
     @PostMapping("/search")
     public SearchResponse search(@RequestBody SearchRequest searchRequest) {
@@ -26,12 +27,12 @@ public class EmployeeController {
     }
 
     @DeleteMapping()
-    public String delete(@RequestBody List<String> ids) {
-        return employeeService.delete(ids);
+    public void delete(@RequestBody List<String> ids) {
+        employeeService.delete(ids);
     }
 
     @PostMapping()
-    public String addOrUpdate(@RequestBody CreateRequest employee) throws ParseException {
+    public Employee addOrUpdate(@RequestBody CreateRequest employee) throws ParseException {
         return employeeService.createOrUpdate(employee);
     }
 
