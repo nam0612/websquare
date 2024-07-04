@@ -1,4 +1,4 @@
-package org.lg.websquare.entity.dto;
+package org.lg.websquare.dto;
 
 import lombok.Builder;
 import lombok.Getter;

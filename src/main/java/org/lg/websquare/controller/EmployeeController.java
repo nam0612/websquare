@@ -1,7 +1,10 @@
 package org.lg.websquare.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.lg.websquare.entity.dto.*;
+import org.lg.websquare.dto.CreateRequest;
+import org.lg.websquare.dto.ExportResponse;
+import org.lg.websquare.dto.SearchRequest;
+import org.lg.websquare.dto.SearchResponse;
 import org.lg.websquare.service.EmployeeService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
@@ -17,9 +20,7 @@ public class EmployeeController {
     private final EmployeeService employeeService;
 
     @PostMapping("/search")
-    public SearchResponse search(
-            @RequestBody SearchRequest searchRequest
-    ) {
+    public SearchResponse search(@RequestBody SearchRequest searchRequest) {
         Pageable pageable = Pageable.ofSize(searchRequest.getParams().getPsize()).withPage(searchRequest.getParams().getPpage());
         return employeeService.search(searchRequest.getParams(), pageable);
     }
@@ -30,8 +31,8 @@ public class EmployeeController {
     }
 
     @PostMapping()
-    public String addOrCreate(@RequestBody CreateRequest employee) throws ParseException {
-        return employeeService.create(employee);
+    public String addOrUpdate(@RequestBody CreateRequest employee) throws ParseException {
+        return employeeService.createOrUpdate(employee);
     }
 
     @PostMapping("/downloadsExcel")

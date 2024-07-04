@@ -1,9 +1,7 @@
-package org.lg.websquare.entity.dto;
+package org.lg.websquare.dto;
 
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.Date;
 
 @Getter
 @Setter

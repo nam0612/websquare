@@ -28,6 +28,5 @@ public class Employee {
     private String address;
     private String team;
     private String status;
-
     private Date createdDate;
 }
