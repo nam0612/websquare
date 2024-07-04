@@ -1,5 +1,6 @@
 package org.lg.websquare.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.lg.websquare.dto.CreateRequest;
 import org.lg.websquare.dto.ExportResponse;
@@ -32,7 +33,7 @@ public class EmployeeController {
     }
 
     @PostMapping()
-    public Employee addOrUpdate(@RequestBody CreateRequest employee) throws ParseException {
+    public Employee addOrUpdate(@Valid @RequestBody CreateRequest employee) throws ParseException {
         return employeeService.createOrUpdate(employee);
     }
 
@@ -42,4 +43,6 @@ public class EmployeeController {
                 .employees(employeeService.exportDataToExcel(searchRequest.getParams()))
                 .build();
     }
+
+
 }
