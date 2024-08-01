@@ -1,15 +1,13 @@
 package org.lg.websquare.convert;
 
-import org.lg.websquare.entity.Employee;
 import org.lg.websquare.dto.EmployeeDTO;
+import org.lg.websquare.entity.Employee;
 import org.lg.websquare.util.DataUtils;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -40,18 +38,17 @@ public class EmployeeConverter {
         return dto;
     }
 
-    public Employee convertToEntity(EmployeeDTO dto) throws ParseException {
-        Employee employee = modelMapper.map(dto, Employee.class);
-        employee.setBirthDate(DataUtils.convertStringToDate(dto.getBirthDate()));
-        employee.setCreatedDate(new Date());
-        return employee;
-    }
-
-
     public String formatDate(Date date) {
         if (date == null) {
             return null;
         }
         return new SimpleDateFormat("yyyy-MM-dd").format(date);
+    }
+
+    public Employee convertToEntity(EmployeeDTO dto) throws ParseException {
+        Employee employee = modelMapper.map(dto, Employee.class);
+        employee.setBirthDate(DataUtils.convertStringToDate(dto.getBirthDate()));
+        employee.setCreatedDate(new Date());
+        return employee;
     }
 }
